@@ -14,6 +14,7 @@ A Python tool that pulls market data for a multi-asset portfolio and computes co
 - **Conditional VaR** - Average severity of a loss if the VaR threshold is breached.
 - **Parametric VaR** - VaR computed using the normal distribution assumption.
 - **Modified VaR** - VaR computed using the Cornish-Fisher expansion.
+- **Calmar ratio** — annualised return divided by maximum drawdown; return per unit of worst-case loss.
 
 
 ## Key Findings
@@ -24,13 +25,17 @@ A Python tool that pulls market data for a multi-asset portfolio and computes co
 - Difference between the VaR & CVaR is ~ 0.8%, suggesting wide tail risk, which is expected from a tech heavy portfolio.
 - Parametric VaR is less severe than the historical VaR and the gap increases with confidence level, which can be explained by the Normal distribution assumption.
 - The Cornish-Fisher √3 sign-flip: at 95% the Modified VaR is less severe than Parametric, but at 99% it flips sharply to far more severe
-- Significant difference between Modified VaR and Parametric VaR at 99% Confidence level, which illustrats the limitations of using a Normal Distribution assumption.
-
+- Significant difference between Modified VaR and Parametric VaR at 99% Confidence level, which illustrates the limitations of using a Normal Distribution assumption.
+- At a 1-day horizon, volatility is so autocorrelated that the last observed value is near-optimal, so a linear regression on 5 lags underperforms the persistence baseline (−6%).
+- At a 21-day horizon the model beats persistence (+0.8% with 5 lags, +3.5% with 2 lags): persistence degrades over longer horizons, leaving room for the model to add value. The 2-lag model’s lower error shows the 5-lag version was overfitting.
+- Both persistence and the linear model lag volatility’s regime shifts and under-react to spikes — the core limitation of lag-based forecasting: it reacts to volatility rather than anticipating it, and is weakest precisely when vol spikes, when risk matters most.
 
 ## Visualisations
 
 - Cumulative return growth and drawdown chart.
 - Correlation heatmap.
+- Annualised realised volatility plot.
+- Annualised realised volatility comparison (Actual vs Model Predictions vs Persistence)
 
 ## Limitations
 
@@ -39,11 +44,11 @@ A Python tool that pulls market data for a multi-asset portfolio and computes co
 
 ## Tech Stack
 
-Python · pandas · numpy · yfinance · matplotlib · seaborn · empyrical · scipy
+Python · pandas · numpy · yfinance · matplotlib · seaborn · empyrical · scipy · scikit-learn
 
 ## How to Run
 
 1. Clone the repo
 2. `conda create -n portfolio python=3.12 && conda activate portfolio`
-3. `conda install pandas numpy matplotlib seaborn ipykernel -y && pip install yfinance`
+3. `conda install pandas numpy matplotlib seaborn scipy scikit-learn ipykernel -y && pip install yfinance empyrical`
 4. Open `Portfolio_Analyzer.ipynb` and run all cells
